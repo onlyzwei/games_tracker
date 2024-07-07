@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:games_tracker/screens/login_screen.dart';
 import 'package:games_tracker/screens/register_screen.dart';
 import 'package:games_tracker/screens/dashboard_screen.dart';
+import 'package:games_tracker/screens/user_screen.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -19,15 +20,20 @@ void main() {
       }
 
       if (settings.name == DashboardScreen.routeName) {
-        final args = settings.arguments as bool;
+        final args = settings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
-          builder: (context) => DashboardScreen(registeredUser: args),
+          builder: (context) => DashboardScreen(
+            registeredUser: args['registeredUser'],
+          ),
         );
+      }
+      if (settings.name == UserScreen.routeName) {
+        return MaterialPageRoute(builder: (context) => UserScreen());
       }
 
       assert(false, 'Need to implement ${settings.name}');
       return null;
     },
-    home: DashboardScreen(registeredUser: false,),
+    home: LoginScreen(),
   ));
 }
