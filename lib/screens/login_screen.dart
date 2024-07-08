@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, unused_import
+// ignore_for_file: prefer_const_constructors, unused_import, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:games_tracker/controllers/user_controller.dart';
@@ -20,24 +20,34 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final UserController _userController = UserController();
 
-  void _login() {
+  Future<void> _login(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
-      if (_emailController.text == "adm" && _passwordController.text == "adm") {
+      String email = _emailController.text;
+      String password = _passwordController.text;
+
+      if (email == "adm" && password == "adm") {
         Navigator.pushNamed(
           context,
           AdmScreen.routeName,
         );
       } else {
-        Navigator.pushNamed(
-          context,
-          DashboardScreen.routeName,
-          arguments: {'registeredUser': true},
-        );
+        User? user = await _userController.getUser(email, password);
+          if (user != null) {
+            Navigator.pushNamed(
+              context,
+              DashboardScreen.routeName,
+              arguments: {'registeredUser': true},
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Usuário ou senha inválidos')),
+            );
+          }
       }
     }
   }
-
 
   void _register() {
     Navigator.pushNamed(
@@ -88,11 +98,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       spacing: 20, // Espaçamento entre os botões
                       children: [
                         ElevatedButton(
-                          onPressed: _login,
+                          onPressed: () => _login(context), // Chama _login com o contexto
                           child: Text('Login'),
                         ),
                         ElevatedButton(
-                          onPressed: _register,
+                          onPressed: _register, // Chama _register diretamente
                           child: Text('Registrar-se'),
                         ),
                       ],

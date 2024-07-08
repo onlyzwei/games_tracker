@@ -19,7 +19,8 @@ class UserController {
 
   Future<List<Map<String, dynamic>>> getUsers() async {
     var db = await DatabaseController().db;
-    List<Map<String, dynamic>> users = await db!.query(tableName);
+    List<Map<String, dynamic>> users =
+        await db!.rawQuery('SELECT * FROM $tableName');
     return users;
   }
 
@@ -42,5 +43,21 @@ class UserController {
       whereArgs: [id]
     );
     return result;
+  }
+
+  Future<User?> getUser(String email, String password) async {
+    var db = await DatabaseController().db;
+    List<Map<String, dynamic>> users = await db!.query(
+      tableName,
+      where: "email = ? AND password = ?",
+      whereArgs: [email, password],
+    );
+
+    if (users.isNotEmpty) {
+      return User.fromMap(users.first);
+    }
+    else {
+      return null;
+    } 
   }
 }

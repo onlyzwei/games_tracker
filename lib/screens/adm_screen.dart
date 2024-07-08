@@ -26,11 +26,11 @@ class _AdmScreenState extends State<AdmScreen> {
     super.initState();
     _loadUsers();
   }
-
+  
   Future<void> _loadUsers() async {
-    List<Map<String, dynamic>> users = await _userController.getUsers();
+    var users = await _userController.getUsers();
     setState(() {
-      _users = users;
+      _users = users; // Atualiza a lista com os usuários obtidos do banco de dados
     });
   }
 
