@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:games_tracker/controllers/user_controller.dart';
 import 'package:games_tracker/models/user.dart';
 import 'package:games_tracker/screens/dashboard_screen.dart';
+import 'package:games_tracker/screens/register_screen.dart';
+import 'package:games_tracker/screens/user_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   static const routeName = '/login';
@@ -21,13 +23,27 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _login() {
     if (_formKey.currentState!.validate()) {
-      // Adicionar a lógica de autenticação
-      Navigator.pushNamed(
-        context,
-        DashboardScreen.routeName,
-        arguments: {'registeredUser': true},
-      );
+      if (_emailController.text == "adm" && _passwordController.text == "adm") {
+        Navigator.pushNamed(
+          context,
+          UserScreen.routeName,
+        );
+      } else {
+        Navigator.pushNamed(
+          context,
+          DashboardScreen.routeName,
+          arguments: {'registeredUser': true},
+        );
+      }
     }
+  }
+
+
+  void _register() {
+    Navigator.pushNamed(
+        context,
+        RegisterScreen.routeName
+    );
   }
 
   @override
@@ -67,10 +83,21 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                   ),
                   SizedBox(height: 16.0),
-                  ElevatedButton(
-                    onPressed: _login,
-                    child: Text('Login'),
-                  ),
+                  Center(
+                    child: Wrap(
+                      spacing: 20, // Espaçamento entre os botões
+                      children: [
+                        ElevatedButton(
+                          onPressed: _login,
+                          child: Text('Login'),
+                        ),
+                        ElevatedButton(
+                          onPressed: _register,
+                          child: Text('Registrar-se'),
+                        ),
+                      ],
+                    ),
+                  )
                 ],
               ),
             ),

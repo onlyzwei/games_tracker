@@ -1,8 +1,6 @@
 // ignore_for_file: prefer_const_constructors, avoid_print, use_super_parameters
 
 import 'package:flutter/material.dart';
-import 'package:games_tracker/controllers/user_controller.dart';
-import 'package:games_tracker/models/user.dart';
 
 class DashboardScreen extends StatelessWidget {
   static const routeName = '/dashboard';

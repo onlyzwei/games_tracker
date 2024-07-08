@@ -49,6 +49,11 @@ class _UserScreenState extends State<UserScreen> {
     }
   }
 
+  Future<void> _deleteUser(int id) async {
+    await _userController.deleteUser(id);
+    _loadUsers();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -95,7 +100,6 @@ class _UserScreenState extends State<UserScreen> {
                       return null;
                     },
                   ),
-                  SizedBox(height: 16.0),
                   ElevatedButton(
                     onPressed: _addUser,
                     child: Text('Add User'),
@@ -103,24 +107,43 @@ class _UserScreenState extends State<UserScreen> {
                 ],
               ),
             ),
-            SizedBox(height: 16.0),
+            SizedBox(height: 20), // Espaçamento entre o formulário e a lista
             Expanded(
-              child: _users.isEmpty
-                  ? Center(child: Text('No users found'))
-                  : ListView.builder(
-                      itemCount: _users.length,
-                      itemBuilder: (context, index) {
-                        var user = _users[index];
-                        return ListTile(
-                          title: Text(user['name']),
-                          subtitle: Text('ID: ${user['id']}'),
-                        );
-                      },
-                    ),
+              child: Center(
+                child: _buildUserList(),
+              ),
             ),
           ],
         ),
       ),
     );
   }
+
+  Widget _buildUserList() {
+    return Wrap(
+      alignment: WrapAlignment.center, // Centraliza os itens na horizontal
+      spacing: 20, // Espaçamento entre os itens
+      runSpacing: 10, // Espaçamento entre as linhas
+      children: _users.isEmpty
+          ? [Text('No users found')]
+          : _users.map((user) => _buildUserItem(user)).toList(),
+    );
+  }
+
+  Widget _buildUserItem(Map<String, dynamic> user) {
+    return Container(
+      width: MediaQuery.of(context).size.width * 0.9, // Ajuste a largura conforme necessário
+      child: ListTile(
+        contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
+        title: Text(user['name']),
+        subtitle: Text('ID: ${user['id']}'),
+        trailing: IconButton(
+          padding: EdgeInsets.zero, // Remove o padding padrão do IconButton
+          icon: Icon(Icons.delete),
+          onPressed: () => _deleteUser(user['id']),
+        ),
+      ),
+    );
+  }
 }
+
