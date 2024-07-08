@@ -1,19 +1,19 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, sized_box_for_whitespace
 
 import 'package:flutter/material.dart';
 import 'package:games_tracker/controllers/user_controller.dart';
 import 'package:games_tracker/models/user.dart';
 
-class UserScreen extends StatefulWidget {
-  static const routeName = '/user';
-  const UserScreen({super.key});
+class AdmScreen extends StatefulWidget {
+  static const routeName = '/adm';
+  const AdmScreen({super.key});
 
   @override
   // ignore: library_private_types_in_public_api
-  _UserScreenState createState() => _UserScreenState();
+  _AdmScreenState createState() => _AdmScreenState();
 }
 
-class _UserScreenState extends State<UserScreen> {
+class _AdmScreenState extends State<AdmScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();

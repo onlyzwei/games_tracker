@@ -5,7 +5,7 @@ import 'package:games_tracker/controllers/user_controller.dart';
 import 'package:games_tracker/models/user.dart';
 import 'package:games_tracker/screens/dashboard_screen.dart';
 import 'package:games_tracker/screens/register_screen.dart';
-import 'package:games_tracker/screens/user_screen.dart';
+import 'package:games_tracker/screens/adm_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   static const routeName = '/login';
@@ -26,7 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if (_emailController.text == "adm" && _passwordController.text == "adm") {
         Navigator.pushNamed(
           context,
-          UserScreen.routeName,
+          AdmScreen.routeName,
         );
       } else {
         Navigator.pushNamed(

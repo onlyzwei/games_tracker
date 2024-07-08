@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:games_tracker/screens/login_screen.dart';
 import 'package:games_tracker/screens/register_screen.dart';
 import 'package:games_tracker/screens/dashboard_screen.dart';
-import 'package:games_tracker/screens/user_screen.dart';
+import 'package:games_tracker/screens/adm_screen.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -26,8 +26,8 @@ void main() {
         );
       }
 
-      if (settings.name == UserScreen.routeName) {
-        return MaterialPageRoute(builder: (context) => FixedSizeScreen(child: UserScreen()));
+      if (settings.name == AdmScreen.routeName) {
+        return MaterialPageRoute(builder: (context) => FixedSizeScreen(child: AdmScreen()));
       }
 
       assert(false, 'Need to implement ${settings.name}');
