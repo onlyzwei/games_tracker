@@ -15,4 +15,17 @@ class GameController {
     List<Map<String, dynamic>> games = await db!.query(tableName);
     return games;
   }
+
+  Future<void> deleteGame(int? gameId) async {
+    if (gameId == null) {
+      throw ArgumentError('gameId must not be null'); // Lança uma exceção se gameId for null
+    }
+
+    var db = await DatabaseController().db;
+    await db!.delete(
+      tableName,
+      where: 'id = ?',
+      whereArgs: [gameId],
+    );
+  }
 }

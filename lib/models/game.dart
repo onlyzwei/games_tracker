@@ -5,7 +5,13 @@ class Game {
   final String description;
   final String releaseDate;
 
-  Game({this.id, required this.userId, required this.name, required this.description, required this.releaseDate});
+  Game({
+    this.id,
+    required this.userId,
+    required this.name,
+    required this.description,
+    required this.releaseDate,
+  });
 
   Map<String, dynamic> toMap() {
     return {
@@ -15,5 +21,15 @@ class Game {
       'description': description,
       'release_date': releaseDate,
     };
+  }
+
+  static Game fromMap(Map<String, dynamic> gameMap) {
+    return Game(
+      id: gameMap['id'],
+      userId: gameMap['user_id'],
+      name: gameMap['name'],
+      description: gameMap['description'],
+      releaseDate: gameMap['release_date'],
+    );
   }
 }

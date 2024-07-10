@@ -1,9 +1,12 @@
 // ignore_for_file: prefer_const_constructors, sized_box_for_whitespace
 
 import 'package:flutter/material.dart';
+import 'package:games_tracker/screens/add_game_screen.dart';
+import 'package:games_tracker/screens/guest_dashboard_screen.dart';
 import 'package:games_tracker/screens/login_screen.dart';
 import 'package:games_tracker/screens/register_screen.dart';
-import 'package:games_tracker/screens/dashboard_screen.dart';
+import 'package:games_tracker/screens/remove_game_screen.dart';
+import 'package:games_tracker/screens/user_dashboard_screen.dart';
 import 'package:games_tracker/screens/adm_screen.dart';
 
 void main() {
@@ -19,16 +22,37 @@ void main() {
         return MaterialPageRoute(builder: (context) => FixedSizeScreen(child: RegisterScreen()));
       }
 
-      if (settings.name == DashboardScreen.routeName) {
+      if (settings.name == UserDashboardScreen.routeName) {
         final args = settings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
-          builder: (context) => FixedSizeScreen(child: DashboardScreen(user: args['user'])),
+          builder: (context) => FixedSizeScreen(child: UserDashboardScreen(currentUser: args['user'])),
+        );
+      }
+
+      if (settings.name == GuestDashboardScreen.routeName) {
+        return MaterialPageRoute(
+          builder: (context) => FixedSizeScreen(child: GuestDashboardScreen()),
         );
       }
 
       if (settings.name == AdmScreen.routeName) {
         return MaterialPageRoute(builder: (context) => FixedSizeScreen(child: AdmScreen()));
       }
+
+      if (settings.name == AddGameScreen.routeName) {
+        final args = settings.arguments as Map<String, dynamic>;
+        return MaterialPageRoute(
+          builder: (context) => FixedSizeScreen(child: AddGameScreen(currentUser: args['user'])),
+        );
+      }
+
+      if (settings.name == RemoveGameScreen.routeName) {
+        final args = settings.arguments as Map<String, dynamic>;
+        return MaterialPageRoute(
+          builder: (context) => FixedSizeScreen(child: RemoveGameScreen(currentUser: args['user'])),
+        );
+      }
+      
 
       assert(false, 'Need to implement ${settings.name}');
       return null;

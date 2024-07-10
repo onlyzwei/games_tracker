@@ -147,42 +147,17 @@ class _AdmScreenState extends State<AdmScreen> {
         padding: EdgeInsets.all(16.0),
         child: SingleChildScrollView(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              _buildSectionTitle('Usuário'),
               Form(
                 key: _userFormKey,
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    TextFormField(
-                      controller: _nameController,
-                      decoration: InputDecoration(labelText: 'Nome'),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Por favor, insira um nome';
-                        }
-                        return null;
-                      },
-                    ),
-                    TextFormField(
-                      controller: _emailController,
-                      decoration: InputDecoration(labelText: 'Email'),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Por favor, insira um email';
-                        }
-                        return null;
-                      },
-                    ),
-                    TextFormField(
-                      controller: _passwordController,
-                      decoration: InputDecoration(labelText: 'Senha'),
-                      obscureText: true,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Por favor, insira uma senha';
-                        }
-                        return null;
-                      },
-                    ),
+                    _buildTextFormField('Nome', _nameController),
+                    _buildTextFormField('Email', _emailController),
+                    _buildTextFormField('Senha', _passwordController, obscureText: true),
                     ElevatedButton(
                       onPressed: _registerUser,
                       child: Text('Adicionar Usuário'),
@@ -191,40 +166,15 @@ class _AdmScreenState extends State<AdmScreen> {
                 ),
               ),
               SizedBox(height: 20), // Espaçamento entre os formulários
+              _buildSectionTitle('Jogo'),
               Form(
                 key: _gameFormKey,
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    TextFormField(
-                      controller: _gameNameController,
-                      decoration: InputDecoration(labelText: 'Nome do Jogo'),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Por favor, insira o nome do jogo';
-                        }
-                        return null;
-                      },
-                    ),
-                    TextFormField(
-                      controller: _gameDescriptionController,
-                      decoration: InputDecoration(labelText: 'Descrição do Jogo'),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Por favor, insira a descrição do jogo';
-                        }
-                        return null;
-                      },
-                    ),
-                    TextFormField(
-                      controller: _gameReleaseDateController,
-                      decoration: InputDecoration(labelText: 'Data de Lançamento'),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Por favor, insira a data de lançamento';
-                        }
-                        return null;
-                      },
-                    ),
+                    _buildTextFormField('Nome', _gameNameController),
+                    _buildTextFormField('Descrição', _gameDescriptionController),
+                    _buildTextFormField('Data de Lançamento', _gameReleaseDateController),
                     ElevatedButton(
                       onPressed: _registerGame,
                       child: Text('Adicionar Jogo'),
@@ -233,20 +183,13 @@ class _AdmScreenState extends State<AdmScreen> {
                 ),
               ),
               SizedBox(height: 20), // Espaçamento entre os formulários
+              _buildSectionTitle('Gênero'),
               Form(
                 key: _genreFormKey,
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    TextFormField(
-                      controller: _genreNameController,
-                      decoration: InputDecoration(labelText: 'Nome do Gênero'),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Por favor, insira o nome do gênero';
-                        }
-                        return null;
-                      },
-                    ),
+                    _buildTextFormField('Nome', _genreNameController),
                     ElevatedButton(
                       onPressed: _registerGenre,
                       child: Text('Adicionar Gênero'),
@@ -255,18 +198,47 @@ class _AdmScreenState extends State<AdmScreen> {
                 ),
               ),
               SizedBox(height: 20), // Espaçamento entre o formulário e a lista de usuários
-              Text('Usuários'),
+              _buildSectionTitle('Usuários Cadastrados'),
               _buildUserList(),
               SizedBox(height: 20), // Espaçamento entre a lista de usuários e a lista de jogos
-              Text('Jogos'),
+              _buildSectionTitle('Jogos Cadastrados'),
               _buildGameList(),
               SizedBox(height: 20), // Espaçamento entre a lista de jogos e a lista de gêneros
-              Text('Gêneros'),
+              _buildSectionTitle('Gêneros Cadastrados'),
               _buildGenreList(),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 8.0),
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextFormField(String labelText, TextEditingController controller, {bool obscureText = false}) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: labelText,
+      ),
+      obscureText: obscureText,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Por favor, insira $labelText';
+        }
+        return null;
+      },
     );
   }
 

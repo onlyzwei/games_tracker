@@ -3,7 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:games_tracker/controllers/user_controller.dart';
 import 'package:games_tracker/models/user.dart';
-import 'package:games_tracker/screens/dashboard_screen.dart';
+import 'package:games_tracker/screens/guest_dashboard_screen.dart';
+import 'package:games_tracker/screens/user_dashboard_screen.dart';
 import 'package:games_tracker/screens/register_screen.dart';
 import 'package:games_tracker/screens/adm_screen.dart';
 
@@ -37,7 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
           if (user != null) {
             Navigator.pushNamed(
               context,
-              DashboardScreen.routeName,
+              UserDashboardScreen.routeName,
               arguments: {'user': user},
             );
           } else {
@@ -59,7 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void _loginAsGuest() {
     Navigator.pushNamed(
       context,
-      DashboardScreen.routeName,
+      GuestDashboardScreen.routeName,
       arguments: {'user': null},
     );
   }
