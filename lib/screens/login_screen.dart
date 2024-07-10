@@ -38,7 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
             Navigator.pushNamed(
               context,
               DashboardScreen.routeName,
-              arguments: {'registeredUser': true},
+              arguments: {'user': user},
             );
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -53,6 +53,14 @@ class _LoginScreenState extends State<LoginScreen> {
     Navigator.pushNamed(
         context,
         RegisterScreen.routeName
+    );
+  }
+
+  void _loginAsGuest() {
+    Navigator.pushNamed(
+      context,
+      DashboardScreen.routeName,
+      arguments: {'user': null},
     );
   }
 
@@ -104,6 +112,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         ElevatedButton(
                           onPressed: _register, // Chama _register diretamente
                           child: Text('Registrar-se'),
+                        ),
+                        ElevatedButton(
+                          onPressed: _loginAsGuest, // Chama _loginAsGuest diretamente
+                          child: Text('Entrar como Visitante'),
                         ),
                       ],
                     ),

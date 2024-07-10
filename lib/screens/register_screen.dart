@@ -19,25 +19,49 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final UserController _userController = UserController();
 
   Future<void> _register() async {
-    if (_formKey.currentState!.validate()) {
-      User user = User(
-        name: _nameController.text,
-        email: _emailController.text,
-        password: _passwordController.text,
-      );
-      await UserController().insertUser(user);
-      if (mounted) {// evitar erros quando operações assíncronas são concluídas após o widget ser removido
-        Navigator.pop(context);
+      if (_formKey.currentState!.validate()) {
+        // Verifica se o email já está cadastrado
+        bool emailExists = await _userController.checkEmailExists(_emailController.text);
+        
+        if (emailExists && mounted) {
+          showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: Text('Email Already Exists'),
+                content: Text('The email you entered is already registered.'),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text('OK'),
+                  ),
+                ],
+              ),
+            );
+        } else {
+          // Se o email não existe, prossegue com o registro
+          User newUser = User(
+            name: _nameController.text,
+            email: _emailController.text,
+            password: _passwordController.text,
+          );
+          await _userController.insertUser(newUser);
+          _nameController.clear();
+          _emailController.clear();
+          _passwordController.clear();
+          if(mounted){
+            Navigator.pop(context);
+          }
+        }
       }
     }
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Cadastrar Novo Usuário')),
+      appBar: AppBar(title: Text('Register New User')),
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: Form(
@@ -47,10 +71,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
             children: [
               TextFormField(
                 controller: _nameController,
-                decoration: InputDecoration(labelText: 'Nome'),
+                decoration: InputDecoration(labelText: 'Name'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Por favor, insira seu nome';
+                    return 'Please enter a name';
                   }
                   return null;
                 },
@@ -60,18 +84,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 decoration: InputDecoration(labelText: 'Email'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Por favor, insira seu email';
+                    return 'Please enter an email';
                   }
                   return null;
                 },
               ),
               TextFormField(
                 controller: _passwordController,
-                decoration: InputDecoration(labelText: 'Senha'),
+                decoration: InputDecoration(labelText: 'Password'),
                 obscureText: true,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Por favor, insira sua senha';
+                    return 'Please enter a password';
                   }
                   return null;
                 },
@@ -79,7 +103,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               SizedBox(height: 20.0),
               ElevatedButton(
                 onPressed: _register,
-                child: Text('Registrar'),
+                child: Text('Register'),
               ),
             ],
           ),

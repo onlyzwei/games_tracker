@@ -22,7 +22,7 @@ void main() {
       if (settings.name == DashboardScreen.routeName) {
         final args = settings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
-          builder: (context) => FixedSizeScreen(child: DashboardScreen(registeredUser: args['registeredUser'])),
+          builder: (context) => FixedSizeScreen(child: DashboardScreen(user: args['user'])),
         );
       }
 

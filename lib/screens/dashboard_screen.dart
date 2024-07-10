@@ -1,12 +1,13 @@
-// ignore_for_file: prefer_const_constructors, avoid_print, use_super_parameters
+// ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:games_tracker/models/user.dart';
 
 class DashboardScreen extends StatelessWidget {
   static const routeName = '/dashboard';
-  final bool registeredUser;
+  final User? user;
 
-  const DashboardScreen({Key? key, required this.registeredUser}) : super(key: key);
+  const DashboardScreen({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -17,8 +18,8 @@ class DashboardScreen extends StatelessWidget {
       ),
       body: Center(
         child: Text(
-          registeredUser
-              ? 'Bem-vindo, usuário registrado!'
+          user != null
+              ? 'Bem-vindo, ${user!.name}!'
               : 'Bem-vindo, visitante!',
         ),
       ),

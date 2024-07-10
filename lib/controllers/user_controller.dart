@@ -30,7 +30,7 @@ class UserController {
       tableName,
       user.toMap(),
       where: "id = ?",
-      whereArgs: [user.id]
+      whereArgs: [user.id],
     );
     return result;
   }
@@ -40,7 +40,7 @@ class UserController {
     int result = await db!.delete(
       tableName,
       where: "id = ?",
-      whereArgs: [id]
+      whereArgs: [id],
     );
     return result;
   }
@@ -55,9 +55,19 @@ class UserController {
 
     if (users.isNotEmpty) {
       return User.fromMap(users.first);
-    }
-    else {
+    } else {
       return null;
-    } 
+    }
+  }
+
+  Future<bool> checkEmailExists(String email) async {
+    var db = await DatabaseController().db;
+    List<Map<String, dynamic>> users = await db!.query(
+      tableName,
+      where: "email = ?",
+      whereArgs: [email],
+    );
+
+    return users.isNotEmpty;
   }
 }

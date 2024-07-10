@@ -1,11 +1,10 @@
 // ignore_for_file: prefer_const_constructors, sized_box_for_whitespace
-
 import 'package:flutter/material.dart';
 import 'package:games_tracker/controllers/user_controller.dart';
 import 'package:games_tracker/models/user.dart';
-
 class AdmScreen extends StatefulWidget {
   static const routeName = '/adm';
+
   const AdmScreen({super.key});
 
   @override
@@ -26,7 +25,7 @@ class _AdmScreenState extends State<AdmScreen> {
     super.initState();
     _loadUsers();
   }
-  
+
   Future<void> _loadUsers() async {
     var users = await _userController.getUsers();
     setState(() {
@@ -34,18 +33,38 @@ class _AdmScreenState extends State<AdmScreen> {
     });
   }
 
-  Future<void> _addUser() async {
+  Future<void> _register() async {
     if (_formKey.currentState!.validate()) {
-      User newUser = User(
-        name: _nameController.text,
-        email: _emailController.text,
-        password: _passwordController.text,
-      );
-      await _userController.insertUser(newUser);
-      _nameController.clear();
-      _emailController.clear();
-      _passwordController.clear();
-      _loadUsers();
+      // Verifica se o email já está cadastrado
+      bool emailExists = await _userController.checkEmailExists(_emailController.text);
+      
+      if (emailExists && mounted) {
+        showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text('Email Already Exists'),
+              content: Text('The email you entered is already registered.'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('OK'),
+                ),
+              ],
+            ),
+          );
+      } else {
+        // Se o email não existe, prossegue com o registro
+        User newUser = User(
+          name: _nameController.text,
+          email: _emailController.text,
+          password: _passwordController.text,
+        );
+        await _userController.insertUser(newUser);
+        _nameController.clear();
+        _emailController.clear();
+        _passwordController.clear();
+        _loadUsers();
+      }
     }
   }
 
@@ -58,7 +77,7 @@ class _AdmScreenState extends State<AdmScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Gerenciamento de usuários'),
+        title: Text('User Management'),
         centerTitle: true,
       ),
       body: Padding(
@@ -101,7 +120,7 @@ class _AdmScreenState extends State<AdmScreen> {
                     },
                   ),
                   ElevatedButton(
-                    onPressed: _addUser,
+                    onPressed: _register,
                     child: Text('Add User'),
                   ),
                 ],
@@ -120,30 +139,21 @@ class _AdmScreenState extends State<AdmScreen> {
   }
 
   Widget _buildUserList() {
-    return Wrap(
-      alignment: WrapAlignment.center, // Centraliza os itens na horizontal
-      spacing: 20, // Espaçamento entre os itens
-      runSpacing: 10, // Espaçamento entre as linhas
-      children: _users.isEmpty
-          ? [Text('No users found')]
-          : _users.map((user) => _buildUserItem(user)).toList(),
-    );
-  }
-
-  Widget _buildUserItem(Map<String, dynamic> user) {
-    return Container(
-      width: MediaQuery.of(context).size.width * 0.9, // Ajuste a largura conforme necessário
-      child: ListTile(
-        contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
-        title: Text(user['name']),
-        subtitle: Text('ID: ${user['id']}'),
-        trailing: IconButton(
-          padding: EdgeInsets.zero, // Remove o padding padrão do IconButton
-          icon: Icon(Icons.delete),
-          onPressed: () => _deleteUser(user['id']),
-        ),
-      ),
+    return ListView.builder(
+      itemCount: _users.length,
+      itemBuilder: (context, index) {
+        final user = _users[index];
+        return ListTile(
+          title: Text(user['name']),
+          subtitle: Text('ID: ${user['id']}'),
+          trailing: IconButton(
+            icon: Icon(Icons.delete),
+            onPressed: () => _deleteUser(user['id']),
+          ),
+        );
+      },
     );
   }
 }
+
 
