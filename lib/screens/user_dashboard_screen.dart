@@ -1,4 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api, prefer_const_constructors, avoid_print
+// ignore_for_file: prefer_const_constructors, library_private_types_in_public_api, unused_import
 
 import 'package:flutter/material.dart';
 import 'package:games_tracker/controllers/game_controller.dart';
@@ -7,6 +7,7 @@ import 'package:games_tracker/models/user.dart';
 import 'package:games_tracker/screens/add_game_screen.dart';
 import 'package:games_tracker/screens/remove_game_screen.dart';
 import 'package:games_tracker/screens/review_game_screen.dart';
+import 'package:games_tracker/main.dart'; // Certifique-se de importar o arquivo onde o MyApp está definido.
 
 class UserDashboardScreen extends StatefulWidget {
   static const routeName = '/user-dashboard';
@@ -18,20 +19,49 @@ class UserDashboardScreen extends StatefulWidget {
   _UserDashboardScreenState createState() => _UserDashboardScreenState();
 }
 
-class _UserDashboardScreenState extends State<UserDashboardScreen> {
+class _UserDashboardScreenState extends State<UserDashboardScreen> with RouteAware {
   final GameController _gameController = GameController();
-  List<Map<String, dynamic>> _games = [];
+  List<GameWithScore> _gamesWithScores = [];
 
   @override
   void initState() {
     super.initState();
-    _loadGames();
+    _loadGamesWithScores();
   }
 
-  Future<void> _loadGames() async {
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final ModalRoute? route = ModalRoute.of(context);
+    if (route is PageRoute) {
+      MyApp.routeObserver.subscribe(this, route);
+    }
+  }
+
+  @override
+  void dispose() {
+    MyApp.routeObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    // Chama a função quando retornando para esta tela
+    _loadGamesWithScores();
+  }
+
+  Future<void> _loadGamesWithScores() async {
     var games = await _gameController.getGames();
+    List<GameWithScore> gamesWithScores = [];
+
+    for (var gameMap in games) {
+      var game = Game.fromMap(gameMap);
+      var avgScore = await _gameController.getAverageScore(game.id ?? -1);
+      gamesWithScores.add(GameWithScore(game: game, averageScore: avgScore));
+    }
+
     setState(() {
-      _games = games;
+      _gamesWithScores = gamesWithScores;
     });
   }
 
@@ -40,7 +70,7 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
       context,
       AddGameScreen.routeName,
       arguments: {'user': widget.currentUser},
-    ).then((_) => _loadGames()); // Recarrega a lista de jogos após adicionar um novo
+    ).then((_) => _loadGamesWithScores()); // Recarrega a lista de jogos após adicionar um novo
   }
 
   void _removeGame() {
@@ -48,15 +78,15 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
       context,
       RemoveGameScreen.routeName,
       arguments: {'user': widget.currentUser},
-    ).then((_) => _loadGames()); // Recarrega a lista de jogos após remover um jogo
+    ).then((_) => _loadGamesWithScores()); // Recarrega a lista de jogos após remover um jogo
   }
 
   void _reviewGame(int gameId) {
-      Navigator.pushNamed(
-        context,
-        ReviewGameScreen.routeName,
-        arguments: {'gameId': gameId, 'user': widget.currentUser},
-      );
+    Navigator.pushNamed(
+      context,
+      ReviewGameScreen.routeName,
+      arguments: {'gameId': gameId, 'user': widget.currentUser},
+    );
   }
 
   @override
@@ -95,19 +125,22 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
   }
 
   Widget _buildGameList() {
-    if (_games.isEmpty) {
+    if (_gamesWithScores.isEmpty) {
       return Center(
         child: Text('No games found'),
       );
     }
 
     return ListView.builder(
-      itemCount: _games.length,
+      itemCount: _gamesWithScores.length,
       itemBuilder: (context, index) {
-        var game = Game.fromMap(_games[index]);
+        var gameWithScore = _gamesWithScores[index];
+        var game = gameWithScore.game;
+        var averageScore = gameWithScore.averageScore?.toStringAsFixed(2) ?? 'No reviews';
+
         return ListTile(
           title: Text(game.name),
-          subtitle: Text(game.description),
+          subtitle: Text('Average Score: $averageScore'),
           trailing: IconButton(
             icon: Icon(Icons.arrow_forward),
             onPressed: () => _reviewGame(game.id ?? -1),
@@ -116,4 +149,11 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
       },
     );
   }
+}
+
+class GameWithScore {
+  final Game game;
+  final double? averageScore;
+
+  GameWithScore({required this.game, required this.averageScore});
 }

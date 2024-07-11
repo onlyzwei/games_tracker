@@ -3,6 +3,13 @@ import 'package:games_tracker/controllers/database_controller.dart';
 
 class GameController {
   static const String tableName = "game";
+  static final GameController _gameController = GameController._internal();
+
+  factory GameController() {
+    return _gameController;
+  }
+
+  GameController._internal();
 
   Future<int> insertGame(Game game) async {
     var db = await DatabaseController().db;
@@ -27,5 +34,44 @@ class GameController {
       where: 'id = ?',
       whereArgs: [gameId],
     );
+  }
+
+  Future<double?> getAverageScore(int gameId) async {
+    var db = await DatabaseController().db;
+    List<Map<String, dynamic>> result = await db!.rawQuery(
+        'SELECT AVG(score) as avg_score FROM review WHERE game_id = ?',
+        [gameId]);
+
+    if (result.isNotEmpty && result.first['avg_score'] != null) {
+      return result.first['avg_score'];
+    } else {
+      return null;
+    }
+  }
+
+  Future<Game> getGameById(int gameId) async {
+    var db = await DatabaseController().db;
+    List<Map<String, dynamic>> games = await db!.query(
+      tableName,
+      where: "id = ?",
+      whereArgs: [gameId],
+    );
+
+    if (games.isNotEmpty) {
+      return Game.fromMap(games.first);
+    } else {
+      throw Exception('Game with id $gameId not found');
+    }
+  }
+
+  Future<int> updateGame(Game game) async {
+    var db = await DatabaseController().db;
+    int result = await db!.update(
+      tableName,
+      game.toMap(),
+      where: "id = ?",
+      whereArgs: [game.id],
+    );
+    return result;
   }
 }
