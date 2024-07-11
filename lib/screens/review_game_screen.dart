@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, library_private_types_in_public_api
+// ignore_for_file: library_private_types_in_public_api, prefer_const_constructors, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:games_tracker/controllers/review_controller.dart';
@@ -11,7 +11,7 @@ import 'package:games_tracker/screens/add_review_screen.dart';
 class ReviewGameScreen extends StatefulWidget {
   static const routeName = '/review-game';
   final int gameId;
-  final User currentUser;
+  final User? currentUser;
 
   const ReviewGameScreen({
     super.key,
@@ -82,10 +82,7 @@ class _ReviewGameScreenState extends State<ReviewGameScreen> {
                       itemCount: reviews.length,
                       itemBuilder: (context, index) {
                         var review = reviews[index];
-                        return ListTile(
-                          title: Text('Score: ${review.score}'),
-                          subtitle: Text('Description: ${review.description}\nDate: ${review.date}'),
-                        );
+                        return _buildReviewTile(review);
                       },
                     ),
                   ),
@@ -97,18 +94,57 @@ class _ReviewGameScreenState extends State<ReviewGameScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.pushNamed(
-            context,
-            AddReviewScreen.routeName,
-            arguments: {'gameId': widget.gameId, 'user': widget.currentUser},
-          ).then((_) {
-            setState(() {
-              _reviews = _fetchReviews();
+          if (widget.currentUser != null) {
+            Navigator.pushNamed(
+              context,
+              AddReviewScreen.routeName,
+              arguments: {'gameId': widget.gameId, 'user': widget.currentUser},
+            ).then((_) {
+              setState(() {
+                _reviews = _fetchReviews();
+              });
             });
-          });
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Usuário deve estar cadastrado')),
+            );
+          }
         },
         child: Icon(Icons.add),
       ),
     );
+  }
+
+  Widget _buildReviewTile(Review review) {
+    bool isCurrentUserReviewOwner = review.userId == widget.currentUser?.id;
+
+    return ListTile(
+      title: Text('Score: ${review.score}'),
+      subtitle: Text('Description: ${review.description}\nDate: ${review.date}'),
+      trailing: isCurrentUserReviewOwner
+          ? IconButton(
+              icon: Icon(Icons.delete),
+              onPressed: () {
+                _deleteReview(review.id ?? -1); // Implementar a função de exclusão aqui
+              },
+            )
+          : null,
+    );
+  }
+
+  void _deleteReview(int reviewId) async {
+    int deleted = await _reviewController.deleteReview(reviewId);
+    if (deleted == 1) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Review excluída com sucesso')),
+      );
+      setState(() {
+        _reviews = _fetchReviews(); // Atualiza a lista de reviews após exclusão
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Erro ao excluir a review')),
+      );
+    }
   }
 }

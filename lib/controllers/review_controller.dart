@@ -54,6 +54,4 @@ class ReviewController {
       whereArgs: [id],
     );
   }
-
-  
 }
