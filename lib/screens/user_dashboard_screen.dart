@@ -15,8 +15,6 @@ class UserDashboardScreen extends StatefulWidget {
   _UserDashboardScreenState createState() => _UserDashboardScreenState();
 }
 
-
-
 class _UserDashboardScreenState extends State<UserDashboardScreen> {
 
   void _addGame() {
@@ -66,6 +64,7 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
           ),
         ],
       ),
+      
     );
   }
 

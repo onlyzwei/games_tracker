@@ -22,8 +22,8 @@ class DatabaseController {
     sqfliteFfiInit();
 
     var databaseFactory = databaseFactoryFfi;
-    final io.Directory appSupportDir = await getApplicationSupportDirectory();
-    String path = p.join(appSupportDir.path, "database", "games_tracker.db");
+    final io.Directory appDocsDir = await getApplicationDocumentsDirectory();
+    String path = p.join(appDocsDir.path, "database", "games_tracker.db");
 
     Database? db = await databaseFactory.openDatabase(
       path,
