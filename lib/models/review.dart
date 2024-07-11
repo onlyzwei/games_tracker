@@ -18,4 +18,15 @@ class Review {
       'date': date,
     };
   }
+
+  static Review fromMap(Map<String, dynamic> map) {
+    return Review(
+      id: map['id'],
+      gameId: map['game_id'],
+      userId: map['user_id'],
+      score: map['score'],
+      description: map['description'],
+      date: map['date'],
+    );
+  }
 }

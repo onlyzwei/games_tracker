@@ -2,10 +2,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:games_tracker/screens/add_game_screen.dart';
+import 'package:games_tracker/screens/add_review_screen.dart';
 import 'package:games_tracker/screens/guest_dashboard_screen.dart';
 import 'package:games_tracker/screens/login_screen.dart';
 import 'package:games_tracker/screens/register_screen.dart';
 import 'package:games_tracker/screens/remove_game_screen.dart';
+import 'package:games_tracker/screens/review_game_screen.dart';
 import 'package:games_tracker/screens/user_dashboard_screen.dart';
 import 'package:games_tracker/screens/adm_screen.dart';
 
@@ -52,8 +54,26 @@ void main() {
           builder: (context) => FixedSizeScreen(child: RemoveGameScreen(currentUser: args['user'])),
         );
       }
-      
 
+      if (settings.name == ReviewGameScreen.routeName) {
+        final args = settings.arguments as Map<String, dynamic>;
+        return MaterialPageRoute(
+          builder: (context) => FixedSizeScreen(child: ReviewGameScreen(currentUser: args['user'], gameId: args['gameId'])),
+        );
+      }
+
+      if (settings.name == AddReviewScreen.routeName) {
+        final args = settings.arguments as Map<String, dynamic>;
+        return MaterialPageRoute(
+          builder: (context) => FixedSizeScreen(
+            child: AddReviewScreen(
+              gameId: args['gameId'],
+              currentUser: args['user'],
+            ),
+          ),
+        );
+      }
+    
       assert(false, 'Need to implement ${settings.name}');
       return null;
     },
